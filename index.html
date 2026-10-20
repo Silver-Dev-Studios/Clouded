@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>SILVER DEV STUDIOS — meet the studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Special+Elite&family=Archivo+Black&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --wall:#050505;          /* pitch venue wall */
+    --paper:#0d0d0e;         /* gunmetal panel */
+    --paper-dim:#18181b;
+    --ink:#151518;           /* charcoal surface */
+    --ink-soft:#1f1f24;
+    --text:#f2f2f0;          /* cold white text */
+    --text-dim:#9a9aa3;      /* muted gray */
+    --red:#9c722a;           /* dark brass accent */
+    --red-dim:#6a4c1c;
+    --rust:#3a3a41;
+    --pipe:#000;
+    --font-title:'Rubik Dirt',cursive;
+    --font-type:'Special Elite',monospace;
+    --font-sans:'Archivo Black',sans-serif;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overscroll-behavior:none}
+  body{
+    background:var(--wall);font-family:var(--font-type);color:var(--text);
+    overflow:hidden;-webkit-font-smoothing:antialiased;
+  }
+  button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+  a{color:inherit}
+
+  /* ---------- venue wall ---------- */
+  .wall-tex{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:
+      radial-gradient(circle at 50% 30%, rgba(156,114,42,.05), transparent 44%),
+      radial-gradient(circle at 82% 64%, rgba(10,10,12,.9), transparent 46%),
+      radial-gradient(circle at 18% 82%, rgba(156,114,42,.03), transparent 40%);
+  }
+  .grain{
+    position:fixed;inset:-50%;z-index:70;pointer-events:none;opacity:.18;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+    animation:grain 9s steps(10) infinite;mix-blend-mode:overlay;
+  }
+  @keyframes grain{0%,100%{transform:translate(0,0)}10%{transform:translate(-2%,-1%)}30%{transform:translate(1%,-2%)}50%{transform:translate(-1%,2%)}70%{transform:translate(2%,1%)}90%{transform:translate(-2%,0)}}
+
+  .scribble-v{
+    position:fixed;right:4vw;top:0;bottom:0;width:34px;z-index:1;pointer-events:none;
+    background-image:repeating-linear-gradient(176deg,transparent 0 10px,rgba(255,255,255,.10) 10px 11px,transparent 11px 17px,rgba(255,255,255,.10) 17px 18px,transparent 18px 30px);
+    opacity:.5;filter:blur(1px);
+  }
+  .scribble-h{
+    position:fixed;left:0;right:0;bottom:3vh;height:20px;z-index:1;pointer-events:none;
+    background-image:repeating-linear-gradient(92deg,transparent 0 14px,rgba(255,255,255,.10) 14px 15px,transparent 15px 23px,rgba(255,255,255,.10) 23px 24px,transparent 24px 40px);
+    opacity:.5;filter:blur(1px);
+  }
+  .sticker{
+    position:fixed;z-index:2;pointer-events:none;
+    background:var(--ink-soft);color:var(--text);opacity:.9;
+    font-family:var(--font-title);font-size:10px;letter-spacing:.05em;padding:5px 9px;
+    transform:rotate(-4deg);box-shadow:0 2px 0 rgba(0,0,0,.4);
+    text-transform:uppercase;
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .sticker--t{top:6vh;left:3vw}
+  .sticker--b{bottom:12vh;right:3vw;transform:rotate(5deg);background:var(--red);color:#040404}
+  .tape{position:fixed;z-index:2;pointer-events:none;width:120px;height:26px;opacity:.12;
+    background:linear-gradient(100deg,rgba(255,255,255,.8),rgba(255,255,255,.4));
+    transform:rotate(-7deg);filter:drop-shadow(0 4px 4px rgba(0,0,0,.5));mix-blend-mode:screen;}
+
+  /* ---------- stage ---------- */
+  .stage{position:relative;z-index:5;height:100dvh;display:flex;align-items:flex-end;justify-content:center}
+
+  .card{
+    position:relative;bottom:0;
+    width:min(430px,94vw);height:84dvh;
+    border-radius:6px 6px 0 0;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.05), transparent 12%),
+      var(--paper);
+    color:var(--text);
+    box-shadow:0 -22px 60px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.1) inset;
+    border-top:1px solid rgba(255,255,255,.06);
+    overflow:hidden;
+    will-change:transform;
+  }
+  /* phosphor scanline bottom edge */
+  .card::after{
+    content:"";position:absolute;left:0;right:0;bottom:-1px;height:6px;z-index:8;pointer-events:none;
+    background:repeating-linear-gradient(90deg, var(--red) 0 14px, transparent 14px 34px);
+    opacity:.5;
+  }
+  .card.rise{animation:rise .7s cubic-bezier(.2,.9,.26,1) forwards}
+  @keyframes rise{from{transform:translateY(28vh)}to{transform:translateY(0)}}
+
+  .card__inner{
+    position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;
+    touch-action:pan-y;scroll-snap-type:y proximity;background:transparent;
+  }
+  .card__inner::-webkit-scrollbar{width:5px}
+  .card__inner::-webkit-scrollbar-thumb{background:rgba(255,255,255,.25);border-radius:0}
+  .card__inner::-webkit-scrollbar-track{background:transparent}
+
+  .scroll-carrier{display:flex;flex-direction:column}
+  .snap-section{height:100%;flex:none;scroll-snap-stop:always}
+
+  /* faint glow wash */
+  .stains{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.8;
+    background-image:
+      radial-gradient(circle at 84% 12%, rgba(156,114,42,.06), transparent 34%),
+      radial-gradient(circle at 8% 74%, rgba(156,114,42,.045), transparent 36%),
+      radial-gradient(circle at 58% 42%, rgba(255,255,255,.03), transparent 40%);
+    mix-blend-mode:screen;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative;height:100%;display:flex;flex-direction:column;padding:16px 20px 14px;overflow:hidden}
+
+  .toprow{display:flex;justify-content:space-between;align-items:flex-start;z-index:3;position:relative;flex:none}
+  .zine-tag{font-family:var(--font-title);font-size:11px;letter-spacing:.08em;color:var(--text);text-transform:uppercase;opacity:.8}
+  .zine-tag b{color:var(--red);font-weight:inherit}
+  .date{font-size:11px;color:var(--text-dim);transform:rotate(-3deg);text-align:right;line-height:1.4}
+
+  .portrait-slot{position:relative;z-index:2;flex:1 1 auto;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:2px 0;}
+  .portrait-frame{
+    position:relative;width:min(78vw, 380px);aspect-ratio:1/1;flex:none;
+  }
+  .portrait {
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:grayscale(1) contrast(1.15) brightness(.95);
+  }
+  /* crt scanlines over the photo */
+  .portrait-frame::after{
+    content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);
+    mix-blend-mode:multiply;
+  }
+  /* glow ring */
+  .portrait-frame::before{
+    content:"";position:absolute;inset:-7px;z-index:0;pointer-events:none;border:1px solid rgba(156,114,42,.5);
+    box-shadow:0 0 22px rgba(156,114,42,.25), 0 0 60px rgba(156,114,42,.1);
+    clip-path:polygon(0 0,86% 0,100% 14%,100% 100%,14% 100%,0 86%);
+  }
+  /* torn/folded corner of the frame */
+  .portrait-frame .corner{
+    position:absolute;top:0;right:0;width:20px;height:20px;z-index:3;pointer-events:none;
+    background:linear-gradient(315deg, var(--paper) 0 50%, transparent 50%);
+  }
+
+  .hero-meta{position:relative;z-index:3}
+  .name-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .name{font-family:var(--font-title);font-weight:400;font-size:clamp(34px,8.6vw,54px);line-height:.86;text-transform:uppercase;letter-spacing:.015em;color:var(--text)}
+  .name .amp{color:var(--red)}
+  .age{font-family:var(--font-sans);font-size:13px;color:var(--text-dim);transform:rotate(-6deg);display:inline-block}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .chip{
+    font-size:9.5px;letter-spacing:.12em;color:var(--text-dim);text-transform:uppercase;
+    border:1.5px solid rgba(255,255,255,.28);padding:5px 9px;background:rgba(255,255,255,.04);
+  }
+  .chip--red{border-color:var(--red);color:var(--red);background:rgba(156,114,42,.06)}
+  .chip--filled{background:#efefef;color:#0a0a0a;border-color:#efefef}
+
+  .tagline{
+    margin-top:16px;font-size:13px;line-height:1.62;color:var(--text);opacity:.88;
+    border-left:3px solid var(--red);padding-left:11px;transform:rotate(-.4deg);
+    max-width:40ch;
+  }
+  .tagline b{font-weight:700}
+
+  .grip{position:relative;z-index:3;margin:16px auto 0;text-align:center}
+  .grip .bars{width:44px;height:22px;margin:0 auto;display:flex;flex-direction:column;justify-content:space-between}
+  .grip .bars i{display:block;height:3px;background:var(--text);opacity:.8}
+  .grip .bars i:nth-child(2){transform:scaleX(.7)}
+  .grip .bars i:nth-child(3){transform:scaleX(.45)}
+  .grip .lab{font-family:var(--font-title);font-size:9px;letter-spacing:.34em;color:var(--text-dim);margin-top:6px;text-transform:uppercase}
+  .grip .lab b{color:var(--red);opacity:1}
+
+  /* ---------- sections ---------- */
+  .sec{position:relative;padding:34px 22px 30px;border-top:1px dashed rgba(255,255,255,.18)}
+  .sec--first{border-top:none}
+  .kicker{
+    font-family:var(--font-sans);font-size:10px;letter-spacing:.2em;color:var(--red);text-transform:uppercase;
+    display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  }
+  .kicker::before{content:"";width:26px;height:10px;background:repeating-linear-gradient(90deg,var(--red) 0 3px,transparent 3px 6px);opacity:.8}
+  .sec h2{font-family:var(--font-title);font-weight:400;font-size:clamp(28px,8vw,40px);line-height:.9;text-transform:uppercase;letter-spacing:.02em;color:var(--text)}
+  .sec .sub{font-size:12.5px;line-height:1.6;color:var(--text-dim);margin-top:10px;max-width:46ch}
+
+  /* grid tiles */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+  .tile{border:1.5px solid rgba(255,255,255,.22);padding:12px;position:relative;background:rgba(255,255,255,.045)}
+  .tile:nth-child(odd){transform:rotate(-.7deg)}
+  .tile:nth-child(even){transform:rotate(.6deg)}
+  .tile .k{font-family:var(--font-sans);font-size:8.5px;letter-spacing:.18em;color:var(--red);text-transform:uppercase;margin-bottom:7px}
+  .tile .v{font-size:12px;line-height:1.45;color:var(--text)}
+  .tile .v b{color:#fff;font-weight:700}
+
+  .scribble-note{
+    margin-top:20px;font-size:12.5px;line-height:1.6;color:var(--text);opacity:.95;
+    border:1.5px solid rgba(255,255,255,.3);padding:12px 14px;transform:rotate(.5deg);
+    background:rgba(255,255,255,.05);position:relative;
+  }
+  .scribble-note::before{content:"✂";position:absolute;top:-11px;right:12px;font-size:14px;color:var(--red);background:var(--paper)}
+
+  /* terminals */
+  .stations{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+  .station{border:1.5px solid rgba(255,255,255,.22);padding:12px 12px 10px;background:rgba(255,255,255,.045);position:relative}
+  .station:nth-child(odd){transform:rotate(-.8deg)}
+  .station .dial{width:100%;margin-bottom:8px}
+  .station .dial svg{width:100%;height:auto;display:block}
+  .station .lbl{font-family:var(--font-sans);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
+  .station .lbl em{color:var(--red);font-style:normal}
+
+  /* keep/junk sweeps */
+  .shreds{display:flex;flex-direction:column;gap:8px;margin-top:20px}
+  .shred{display:flex;align-items:center;gap:12px;min-height:34px;position:relative}
+  .shred .box{width:20px;height:20px;flex:none;border:2px solid rgba(255,255,255,.6);position:relative}
+  .shred.off .box{background:#efefef}
+  .shred.off .box::before{content:"✕";position:absolute;inset:0;display:grid;place-items:center;color:#0a0a0a;font-size:13px;font-weight:700}
+  .shred .txt{font-size:12.5px;color:var(--text);flex:1}
+  .shred .txt b{color:#fff;font-weight:700}
+  .shred .stamp{margin-left:auto;font-family:var(--font-title);font-size:9px;color:var(--red);border:1.5px solid var(--red);padding:2px 6px;transform:rotate(6deg);letter-spacing:.1em}
+  .shred::after{content:"";position:absolute;left:0;right:0;bottom:-4px;border-bottom:1px dashed rgba(255,255,255,.15)}
+
+  .doodle{width:100%;max-width:220px;height:auto;margin:22px auto 0;display:block;filter:invert(1) opacity(.9)}
+
+  /* END */
+  .end{padding:40px 22px 42px}
+  .end .big{font-family:var(--font-title);font-size:clamp(26px,9vw,40px);line-height:.9;text-transform:uppercase;color:var(--text)}
+  .end .big .r{color:var(--red)}
+  .end p{font-size:12.5px;line-height:1.65;color:var(--text-dim);margin-top:12px;max-width:40ch}
+  .crawl{writing-mode:vertical-rl;position:absolute;right:16px;top:70px;font-size:10px;letter-spacing:.4em;color:var(--red);text-transform:uppercase}
+  .cta{
+    display:block;margin:24px auto 0;font-family:var(--font-title);font-size:14px;letter-spacing:.14em;
+    color:#040404;background:var(--red);border:2px solid rgba(255,255,255,.6);padding:13px 26px;
+    transform:rotate(-1.5deg);box-shadow:4px 4px 0 rgba(0,0,0,.8);text-transform:uppercase;
+    text-decoration:none;text-align:center;cursor:pointer;
+  }
+  .cta:active{transform:translate(2px,2px) rotate(-1.5deg);box-shadow:2px 2px 0 rgba(0,0,0,.8)}
+  .stamp-red{
+    margin:26px auto 0;width:max-content;font-family:var(--font-title);font-size:12px;letter-spacing:.2em;
+    color:var(--red-dim);border:2px solid var(--red-dim);padding:6px 12px;transform:rotate(-8deg);opacity:.9;text-transform:uppercase;
+  }
+
+  /* soft vignette */
+  .card::before{
+    content:"";position:absolute;inset:0;z-index:6;pointer-events:none;mix-blend-mode:multiply;opacity:.7;
+    box-shadow:0 0 70px rgba(0,0,0,.6) inset;
+  }
+
+  /* drag state hint */
+  .deck.dragging .grip .bars i{background:var(--red);box-shadow:0 0 10px var(--red)}
+  .toast-pill{
+    position:fixed;top:40px;left:50%;transform:translateX(-50%);z-index:80;
+    background:#0e0e10;color:var(--text);font-size:11px;letter-spacing:.1em;padding:10px 16px;
+    border:1px solid rgba(156,114,42,.5);opacity:0;pointer-events:none;transition:.35s;
+    box-shadow:0 0 20px rgba(156,114,42,.15);white-space:nowrap;
+  }
+  .toast-pill.on{opacity:1;transform:translateX(-50%) translateY(4px)}
+  .toast-pill b{color:var(--red)}
+
+  .hidden{display:none}
+</style>
+</head>
+<body>
+  <div class="wall-tex"></div>
+  <div class="grain"></div>
+  <div class="scribble-v"></div>
+  <div class="scribble-h"></div>
+  <div class="sticker sticker--t">small studio · big on craft</div>
+  <div class="sticker sticker--b">no bloat, ever</div>
+  <div class="tape" style="top:2vh;left:8vw"></div>
+  <div class="toast-pill" id="toast"></div>
+
+  <div class="stage">
+    <div class="deck" id="deck">
+      <section class="card" id="card">
+        <div class="stains"></div>
+        <div class="card__inner" id="inner">
+          <div class="scroll-carrier">
+
+            <!-- HERO -->
+            <div class="snap-section hero" data-sec="hero">
+              <div class="toprow">
+                <div class="zine-tag">SILVER <b>DEV</b> STUDIOS</div>
+                <div class="date">est. 17<br>build something</div>
+              </div>
+
+              <div class="portrait-slot">
+                <div class="portrait-frame">
+                  <img class="portrait" src="profile.jpg" alt="Portrait of the founder of Silver Dev Studios" />
+                  <div class="corner"></div>
+                </div>
+              </div>
+
+              <div class="hero-meta">
+                <div class="name-row">
+                  <h1 class="name">SILVER&nbsp;<span class="amp">DEV</span></h1>
+                  <span class="age">17</span>
+                </div>
+                <div class="chips">
+                  <span class="chip chip--filled">FOUNDER</span>
+                  <span class="chip chip--red">SILVER DEV STUDIOS</span>
+                  <span class="chip">REMOTE</span>
+                  <span class="chip">ALLERGIC TO BLOAT</span>
+                </div>
+                <p class="tagline">"A small studio crafting <b>web tools, Discord bots
+                  and experiences that feel like you</b>. Small in scope,
+                  big on craft — and our north star is <b>identities.dev</b>,
+                  where customization is the point, not a premium tier."</p>
+                <div class="grip">
+                  <div class="bars"><i></i><i></i><i></i></div>
+                  <div class="lab">SWIPE <b>UP &amp; MEET THE STUDIO</b></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- THE STUDIO -->
+            <div class="snap-section sec sec--first" data-sec="studio">
+              <div class="kicker">Side A · Track 1</div>
+              <h2>THE STUDIO</h2>
+              <div class="grid2">
+                <div class="tile"><div class="k">Who we are</div><div class="v"><b>Silver Dev Studios</b> — a deliberately small, independent studio building web tools, Discord bots &amp; trading tools</div></div>
+                <div class="tile"><div class="k">Crew</div><div class="v"><b>Hand-built</b>, not factory-made. Small team, tight scope, obsessive craft</div></div>
+                <div class="tile"><div class="k">Purpose</div><div class="v">Profiles, bots and little web experiences that <b>actually feel like you</b>, not a template</div></div>
+                <div class="tile"><div class="k">The stance</div><div class="v">Most link-in-bio tools maximize accounts and minimize personality. <b>We think that's backwards.</b></div></div>
+                <div class="tile" style="grid-column:span 2"><div class="k">North star</div><div class="v"><b>identities.dev</b> — where customization is the point, <b>not a premium tier</b>. Everything SDS ships shares that philosophy: a handful of opinions, a lot of polish, nothing in the way of who you are.</div></div>
+              </div>
+              <div class="scribble-note">small in scope · <b>big on craft</b> · allergic to <b>bloat</b></div>
+            </div>
+
+            <!-- CATALOG -->
+            <div class="snap-section sec" data-sec="catalog">
+              <div class="kicker">Side A · Track 2</div>
+              <h2>CATALOG</h2>
+              <p class="sub">Everything the studio ships — each product built by a different member of the team.</p>
+              <div class="stations">
+                <div class="station">
+                  <svg class="dial" viewBox="0 0 150 60" role="img" aria-label="identities dev product window">
+                    <rect x="8" y="14" width="134" height="34" fill="#0a0a0c" stroke="#fff" stroke-opacity=".5" stroke-width="1.6"/>
+                    <text x="14" y="28" fill="#9c722a" font-family="Special Elite,monospace" font-size="7" letter-spacing="1">// PRODUCT</text>
+                    <text x="14" y="42" fill="#f2f2f0" font-family="Special Elite,monospace" font-size="7.5" letter-spacing="1">identities.dev</text>
+                  </svg>
+                  <div class="lbl">product · <em>link-in-bio, fully yours</em></div>
+                </div>
+                <div class="station">
+                  <svg class="dial" viewBox="0 0 150 60" role="img" aria-label="SDS bot product window">
+                    <rect x="8" y="14" width="134" height="34" fill="#0a0a0c" stroke="#fff" stroke-opacity=".5" stroke-width="1.6"/>
+                    <text x="14" y="28" fill="#9c722a" font-family="Special Elite,monospace" font-size="7" letter-spacing="1">// PRODUCT</text>
+                    <text x="14" y="42" fill="#f2f2f0" font-family="Special Elite,monospace" font-size="7.5" letter-spacing="1">SDS BOT</text>
+                  </svg>
+                  <div class="lbl">product · <em>ai, music, mod, tickets</em></div>
+                </div>
+                <div class="station" style="grid-column:span 2">
+                  <svg class="dial" viewBox="0 0 150 60" role="img" aria-label="Katanith product window">
+                    <rect x="8" y="14" width="134" height="34" fill="#0a0a0c" stroke="#fff" stroke-opacity=".5" stroke-width="1.6"/>
+                    <text x="14" y="28" fill="#9c722a" font-family="Special Elite,monospace" font-size="7" letter-spacing="1">// PRODUCT</text>
+                    <text x="14" y="42" fill="#f2f2f0" font-family="Special Elite,monospace" font-size="7.5" letter-spacing="1">KATANITH</text>
+                  </svg>
+                  <div class="lbl">product · <em>trading journal &amp; analytics</em></div>
+                </div>
+                <div class="station" style="grid-column:span 2">
+                  <svg class="dial" viewBox="0 0 150 60" role="img" aria-label="Spitari product window">
+                    <rect x="8" y="14" width="134" height="34" fill="#0a0a0c" stroke="#fff" stroke-opacity=".5" stroke-width="1.6"/>
+                    <text x="14" y="28" fill="#9c722a" font-family="Special Elite,monospace" font-size="7" letter-spacing="1">// PRODUCT</text>
+                    <text x="14" y="42" fill="#f2f2f0" font-family="Special Elite,monospace" font-size="7.5" letter-spacing="1">SPITARI</text>
+                  </svg>
+                  <div class="lbl">product · <em>windows interface for aim &amp; visuals</em></div>
+                </div>
+              </div>
+              <div class="scribble-note">also on the shelf — <b>Code Editor</b> · <b>Fabrica</b> · more from the <b>team</b></div>
+            </div>
+
+            <!-- TEAM -->
+            <div class="snap-section sec" data-sec="team">
+              <div class="kicker">Side B · Track 1</div>
+              <h2>THE CREW</h2>
+              <p class="sub">Not one person behind it all — different members of the team, each with their own product.</p>
+              <div class="shreds">
+                <div class="shred"><div class="box"></div><div class="txt"><b>identities.dev</b> — profiles built with blocks</div><div class="stamp">PRODUCT</div></div>
+                <div class="shred off"><div class="box"></div><div class="txt"><b>SDS Bot</b> — ai, music, moderation, tickets</div><div class="stamp">PRODUCT</div></div>
+                <div class="shred"><div class="box"></div><div class="txt"><b>Katanith</b> — trading journal &amp; analytics platform</div><div class="stamp">PRODUCT</div></div>
+                <div class="shred off"><div class="box"></div><div class="txt"><b>Spitari</b> — windows interface for aim &amp; visuals</div><div class="stamp">PRODUCT</div></div>
+                <div class="shred"><div class="box"></div><div class="txt"><b>Code Editor</b> — runs 100% in your browser</div><div class="stamp">PRODUCT</div></div>
+                <div class="shred off"><div class="box"></div><div class="txt"><b>Fabrica</b> — Minecraft data pack &amp; add-on maker</div><div class="stamp">PRODUCT</div></div>
+              </div>
+              <svg class="doodle" viewBox="0 0 200 60" role="img" aria-label="launching rocket doodle">
+                <rect x="20" y="34" width="120" height="12" fill="#fff" stroke="#0a0a0c" stroke-width="2" transform="rotate(-4 80 40)"/>
+                <path d="M84 40 L112 22 L130 40" fill="none" stroke="#9c722a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M96 22 q-6 -8 4 -10 q6 4 2 10" fill="#fff" stroke="#0a0a0c" stroke-width="1.6"/>
+                <text x="60" y="48" fill="#0a0a0c" font-family="Special Elite,monospace" font-size="6" letter-spacing="1">SILVER DEV STUDIOS</text>
+                <text x="30" y="14" fill="#9c722a" font-family="Special Elite,monospace" font-size="8" letter-spacing="1">> SHIPPING</text>
+              </svg>
+            </div>
+
+            <!-- END -->
+            <div class="snap-section sec end" data-sec="end">
+              <div class="kicker">Side B · final track</div>
+              <div class="big">MAKE IT<br><span class="r">YOURS.</span></div>
+              <div class="crawl">silver dev studios · remote · small &amp; hand-built</div>
+              <p>Everything SDS ships is hand-built, small in scope, and allergic to bloat —
+                 each product made by a different member of the team. If you want a
+                 profile that's actually yours, or just want to see what's shipping,
+                 the studio is <b>most responsive on Discord</b>.</p>
+              <a class="cta" id="pinch" href="https://discord.gg/RdKDd6bmMX" target="_blank" rel="noopener">JOIN THE DISCORD ↗</a>
+              <div class="stamp-red">❖ REMOTE · HAND-BUILT · NO TEMPLATES</div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const card = document.getElementById('card');
+  const inner = document.getElementById('inner');
+  const deck = document.getElementById('deck');
+  const toast = document.getElementById('toast');
+  const isTouch = matchMedia('(pointer: coarse)').matches;
+
+  /* haptics */
+  const audio = new (window.AudioContext || window.webkitAudioContext)();
+  const thock = () => {
+    try {
+      const t = audio.currentTime;
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(120, t);
+      o.frequency.exponentialRampToValueAtTime(70, t + 0.07);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.18, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
+      o.connect(g).connect(audio.destination);
+      o.start(t); o.stop(t + 0.13);
+      if (audio.state === 'suspended') audio.resume();
+    } catch(e){}
+  };
+  const bump = () => { try { navigator.vibrate?.(12); } catch(e){} };
+
+  let sectionStep = 0;
+  const calcStep = () => sectionStep = Math.round(inner.clientHeight);
+  calcStep();
+  addEventListener('resize', calcStep);
+
+  const advance = (dir = 1) => {
+    const target = inner.scrollTop + dir * sectionStep;
+    if (target < 0) return;
+    inner.style.scrollSnapType = 'none';
+    inner.scrollTo({ top: target, behavior: 'smooth' });
+    clearTimeout(advance._t);
+    advance._t = setTimeout(() => { inner.style.scrollSnapType = ''; }, 480);
+    thock(); bump();
+  };
+
+  /* touch: native snap + haptic per section */
+  let lastSnapT = 0, lastScroll = 0;
+  inner.addEventListener('scroll', () => {
+    const now = performance.now();
+    if (inner.scrollTop >= sectionStep - 4 && lastScroll < sectionStep - 4 && now - lastSnapT > 600) {
+      lastSnapT = now; thock(); bump();
+    }
+    if (inner.scrollTop === 0) lastSnapT = 0;
+    lastScroll = inner.scrollTop;
+  }, { passive: true });
+
+  /* mouse press-drag on grip or right-edge */
+  const grip = inner.querySelector('.grip') || inner;
+  let drag = null;
+  const finishDrag = () => {
+    if (!drag) return;
+    const from = inner.scrollTop;
+    drag = null;
+    deck.classList.remove('dragging');
+    if (from > 26) {
+      inner.scrollTo({ top: sectionStep, behavior: 'smooth' });
+      thock(); bump();
+    } else {
+      inner.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    setTimeout(() => { inner.style.scrollSnapType = ''; }, 400);
+  };
+  inner.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse' || inner.scrollTop > 24) return;
+    const inGrip = grip.contains(e.target);
+    const inMidEast = e.offsetY > inner.clientHeight * 0.6 && e.offsetX > inner.clientWidth * 0.8;
+    if (!inGrip && !inMidEast) return;
+    e.preventDefault();
+    drag = { startY: e.clientY, startScroll: inner.scrollTop };
+    deck.classList.add('dragging');
+    inner.style.scrollSnapType = 'none';
+  });
+  addEventListener('pointermove', e => {
+    if (!drag || e.pointerType !== 'mouse') return;
+    const pull = drag.startY - e.clientY;
+    if (pull > 0) {
+      inner.scrollTop = Math.min(drag.startScroll + pull, sectionStep - 1);
+    }
+    e.preventDefault();
+  });
+  addEventListener('pointerup', () => finishDrag());
+  addEventListener('pointercancel', () => finishDrag());
+
+  /* wheel: full-section stepping at boundaries */
+  inner.addEventListener('wheel', e => {
+    if (isTouch || Math.abs(e.deltaY) < 6) return;
+    const atBoundary = Math.abs(inner.scrollTop - (inner.scrollTop / sectionStep | 0) * sectionStep) < 12;
+    if (!atBoundary) return;
+    e.preventDefault();
+    advance(e.deltaY > 0 ? 1 : -1);
+  }, { passive: false });
+
+  /* keyboard */
+  addEventListener('keydown', e => {
+    const k = e.key;
+    if (k === 'ArrowDown' || k === 'PageDown' || k === ' ') { if (inner.scrollTop < sectionStep - 2) { e.preventDefault(); advance(1); } }
+    else if (k === 'ArrowUp' || k === 'PageUp') { if (inner.scrollTop > 2) { e.preventDefault(); advance(-1); } }
+  });
+
+  addEventListener('pointerdown', () => { if (audio.state === 'suspended') audio.resume(); }, { once: true });
+  addEventListener('keydown', () => { if (audio.state === 'suspended') audio.resume(); }, { once: true });
+
+  /* toast + CTA */
+  let toastT;
+  const showToast = (msg) => {
+    toast.innerHTML = msg;
+    toast.classList.add('on');
+    clearTimeout(toastT);
+    toastT = setTimeout(() => toast.classList.remove('on'), 2600);
+  };
+  document.getElementById('pinch').addEventListener('click', () => {
+    showToast('opening <b>discord.gg/RdKDd6bmMX</b>');
+    thock(); bump();
+  });
+
+  /* preserve any CSS rotation before reveal (tiles/stations/stamps are tilted) */
+  const revealTargets = '.tile, .station, .shred, .scribble-note, .doodle, .stamp-red';
+  inner.querySelectorAll('.snap-section').forEach(s => {
+    s.querySelectorAll(revealTargets).forEach(el => {
+      if (el.parentElement === s) {
+        const cs = getComputedStyle(el);
+        if (!el.dataset.t) el.dataset.t = (cs.transform && cs.transform !== 'none') ? el.style.transform || cs.transform : 'none';
+        el.style.opacity = 0; el.style.transform = 'translateY(12px)';
+      }
+    });
+  });
+
+  const io = new IntersectionObserver(es => {
+    es.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.querySelectorAll(revealTargets).forEach((el, i) => {
+          el.style.transition = `opacity .45s ${Math.min(i * 0.06, 0.42)}s ease, transform .45s ${Math.min(i * 0.06, 0.42)}s ease`;
+          el.style.opacity = 1;
+          el.style.transform = el.dataset.t === 'none' ? '' : el.dataset.t;
+        });
+      }
+    });
+  }, { threshold: 0.1 });
+  inner.querySelectorAll('.snap-section').forEach(s => io.observe(s));
+
+  requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('rise')));
+})();
+</script>
+</body>
+</html>
